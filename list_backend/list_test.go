@@ -42,6 +42,15 @@ func TestCheckNone(t *testing.T) {
 	)
 }
 
+func TestImmediateDirExclude(t *testing.T) {
+	testCheck(
+		".git/logs/refs/heads/25-my-lovely-branch",
+		".git/",
+		list_backend.MatchExclude,
+		t,
+	)
+}
+
 func TestImplicitDirExclude(t *testing.T) {
 	testCheck(
 		"services/my_random_service/file.foo",
