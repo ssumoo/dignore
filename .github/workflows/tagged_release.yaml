@@ -18,7 +18,7 @@ jobs:
           go-version: 1.19
 
       - name: build
-        run: RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /dignore
+        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /dignore
 
       - name: test
         run: go test -v ./...
