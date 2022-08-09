@@ -14,10 +14,23 @@ func List(
 	explain bool,
 	printFilter PrintFilter,
 ) {
+	matchResults, err := GetFilesWrtDockerignore(dockerignorePath, rootPath)
+	if err != nil {
+		return
+	}
+	for _, mr := range matchResults {
+		printMatches(mr, printFilter, explain)
+	}
+}
+
+func GetFilesWrtDockerignore(
+	dockerignorePath string,
+	rootPath string,
+) ([]MatchResult, error) {
 	lines, err := readDockerignoreFile(dockerignorePath)
 	if err != nil {
 		fmt.Println("error matching file")
-		return
+		return []MatchResult{}, err
 	}
 
 	files := make([]string, 0)
@@ -32,18 +45,20 @@ func List(
 		})
 	if walkErr != nil {
 		fmt.Println("error listing files under directory")
-		return
+		return []MatchResult{}, err
 	}
 
+	matchResults := make([]MatchResult, 0)
 	for _, path := range files {
 		relPath, err := filepath.Rel(rootPath, path)
 		if err != nil {
 			fmt.Printf("error computing rel path for %s from %s\n", path, rootPath)
-			return
+			return []MatchResult{}, err
 		}
 		matchRes := checkPathAgainstDockerignore(relPath, lines)
-		printMatches(path, matchRes, printFilter, explain)
+		matchResults = append(matchResults, matchRes)
 	}
+	return matchResults, nil
 }
 
 func readDockerignoreFile(path string) ([]string, error) {
@@ -78,18 +93,19 @@ func readDockerignoreFile(path string) ([]string, error) {
 	return content, err
 }
 
-func checkPathAgainstDockerignore(path string, dockerignoreLines []string) matchResult {
+func checkPathAgainstDockerignore(path string, dockerignoreLines []string) MatchResult {
 	for i := len(dockerignoreLines) - 1; i >= 0; i-- {
 		line := dockerignoreLines[i]
-		res := matchResult{
+		res := MatchResult{
+			path,
 			line,
 			checkPathAgainstLine(path, line),
 		}
-		if res.mode != matchNone {
+		if res.Mode != matchNone {
 			return res
 		}
 	}
-	return matchResult{"", matchNone}
+	return MatchResult{path, "", matchNone}
 }
 
 func checkPathAgainstLine(path string, line string) matchMode {

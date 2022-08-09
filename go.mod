@@ -3,6 +3,7 @@ module github/ssumoo/dignore
 go 1.18
 
 require (
+	github.com/bmatcuk/doublestar/v4 v4.2.0
 	github.com/fatih/color v1.13.0
 	github.com/spf13/cobra v1.5.0
 )

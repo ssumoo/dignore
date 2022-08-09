@@ -1,6 +1,6 @@
 docker_test_dir/
 dignore
-
+z_test_res*
 
 *.exe
 *.exe~

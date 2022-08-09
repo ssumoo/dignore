@@ -7,16 +7,15 @@ import (
 )
 
 func printMatches(
-	path string,
-	res matchResult,
+	res MatchResult,
 	filter PrintFilter,
 	explain bool,
 ) {
-	if !shouldPrint(res.mode, filter) {
+	if !shouldPrint(res.Mode, filter) {
 		return
 	}
-	printString := getPrintString(path, res, explain)
-	if res.mode == matchExclude {
+	printString := getPrintString(res.Path, res, explain)
+	if res.Mode == matchExclude {
 		color.Red(printString)
 	} else {
 		color.Green(printString)
@@ -41,11 +40,11 @@ func shouldPrint(
 
 func getPrintString(
 	path string,
-	res matchResult,
+	res MatchResult,
 	explain bool,
 ) string {
 	if explain {
-		return fmt.Sprintf("%s [%s]", path, res.line)
+		return fmt.Sprintf("%s [%s]", path, res.Line)
 	}
 	return path
 }

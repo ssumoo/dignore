@@ -42,6 +42,24 @@ func TestCheckNone(t *testing.T) {
 	)
 }
 
+func TestOneLevelStarExclude(t *testing.T) {
+	testCheck(
+		"aaa/bbb/ccc.txt",
+		"*/bbb",
+		list_backend.MatchExclude,
+		t,
+	)
+}
+
+func TestOneLevelStarInclude(t *testing.T) {
+	testCheck(
+		"aaa/bbb/ccc.txt",
+		"*bbb",
+		list_backend.MatchNone,
+		t,
+	)
+}
+
 func TestImmediateDirExclude(t *testing.T) {
 	testCheck(
 		".git/logs/refs/heads/25-my-lovely-branch",
@@ -51,10 +69,91 @@ func TestImmediateDirExclude(t *testing.T) {
 	)
 }
 
-func TestImplicitDirExclude(t *testing.T) {
+func TestImmediateStarExclude(t *testing.T) {
+	testCheck(
+		".git",
+		"*",
+		list_backend.MatchExclude,
+		t,
+	)
+}
+
+func TestNestedStarExclude(t *testing.T) {
+	testCheck(
+		".git/logs/refs/heads/25-my-lovely-branch",
+		"*",
+		list_backend.MatchExclude,
+		t,
+	)
+}
+
+func TestImplicitDirInclude(t *testing.T) {
 	testCheck(
 		"services/my_random_service/file.foo",
-		"services/",
+		"my_random_service/",
+		list_backend.MatchNone,
+		t,
+	)
+}
+
+func TestImplicitStarInclude(t *testing.T) {
+	testCheck(
+		"services/my_random_service/file.foo",
+		"*my_random_service",
+		list_backend.MatchNone,
+		t,
+	)
+}
+
+func TestNaiveDoubleStarMatch(t *testing.T) {
+	testCheck(
+		"services/dir1/name/some_files.txt",
+		"**/name/",
+		list_backend.MatchExclude,
+		t,
+	)
+}
+
+func TestNaiveDoubleStarMatch2(t *testing.T) {
+	testCheck(
+		"services/dir1/name/some_files.txt",
+		"**name/",
+		list_backend.MatchExclude,
+		t,
+	)
+}
+
+func TestTwoDoubleStarMatch(t *testing.T) {
+	testCheck(
+		"services/dir1/name/some_files.txt",
+		"**/name/**",
+		list_backend.MatchExclude,
+		t,
+	)
+}
+
+func TestTwoDoubleStarMatch2(t *testing.T) {
+	testCheck(
+		"services/dir1/name/some_files.txt",
+		"**/non_existent/**",
+		list_backend.MatchNone,
+		t,
+	)
+}
+
+func TestDoubleStarMatchAtRoot(t *testing.T) {
+	testCheck(
+		"services/dir1/name/some_files.txt",
+		"**/some_files.txt",
+		list_backend.MatchExclude,
+		t,
+	)
+}
+
+func TestDoubleStarFlieExtensionMatch(t *testing.T) {
+	testCheck(
+		"services/dir1/name/some_files.txt",
+		"**/*.txt",
 		list_backend.MatchExclude,
 		t,
 	)
@@ -69,11 +168,11 @@ func TestDeepInSubdirExclude(t *testing.T) {
 	)
 }
 
-func TestFileExtensionExclude(t *testing.T) {
+func TestImplicitFileExtensionInclude(t *testing.T) {
 	testCheck(
 		"services/dir1/dir2/aaa_sub_string_abc.bar",
 		"*.bar",
-		list_backend.MatchExclude,
+		list_backend.MatchNone,
 		t,
 	)
 }

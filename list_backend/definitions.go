@@ -27,7 +27,8 @@ const (
 	PrintAll
 )
 
-type matchResult struct {
-	line string
-	mode matchMode
+type MatchResult struct {
+	Path string
+	Line string
+	Mode matchMode
 }
