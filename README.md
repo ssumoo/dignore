@@ -26,6 +26,7 @@ dignore list  # in $PWD, read .dockerignore, and print all excluded files
 dignore list --include  # and print all included files
 dignore list --all  # print all included and excluded files
 dignore list --include --quiet > included_files.txt
+dignore list | fzf  # run dignore + pipe into the fzf search
 ```
 
 ## Limitations
