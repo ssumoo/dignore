@@ -19,6 +19,17 @@ func (m matchMode) String() string {
 	}
 }
 
+func (m matchMode) FinalResult() string {
+	switch m {
+	case matchExclude:
+		return "Exclude"
+	case matchInclude:
+		return "Include"
+	default:
+		return "Include"
+	}
+}
+
 type PrintFilter int64
 
 const (

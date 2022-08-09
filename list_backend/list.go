@@ -29,7 +29,7 @@ func GetFilesWrtDockerignore(
 ) ([]MatchResult, error) {
 	lines, err := readDockerignoreFile(dockerignorePath)
 	if err != nil {
-		fmt.Println("error matching file")
+		fmt.Fprintln(os.Stderr, "error matching file")
 		return []MatchResult{}, err
 	}
 
@@ -40,11 +40,14 @@ func GetFilesWrtDockerignore(
 			if err != nil {
 				return err
 			}
+			if info.IsDir() {
+				return nil
+			}
 			files = append(files, path)
 			return nil
 		})
 	if walkErr != nil {
-		fmt.Println("error listing files under directory")
+		fmt.Fprintln(os.Stderr, "error listing files under directory")
 		return []MatchResult{}, err
 	}
 
@@ -52,7 +55,7 @@ func GetFilesWrtDockerignore(
 	for _, path := range files {
 		relPath, err := filepath.Rel(rootPath, path)
 		if err != nil {
-			fmt.Printf("error computing rel path for %s from %s\n", path, rootPath)
+			fmt.Fprintf(os.Stderr, "error computing rel path for %s from %s\n", path, rootPath)
 			return []MatchResult{}, err
 		}
 		matchRes := checkPathAgainstDockerignore(relPath, lines)
