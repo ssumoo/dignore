@@ -114,15 +114,6 @@ func TestNaiveDoubleStarMatch(t *testing.T) {
 	)
 }
 
-func TestNaiveDoubleStarMatch2(t *testing.T) {
-	testCheck(
-		"services/dir1/name/some_files.txt",
-		"**name/",
-		list_backend.MatchExclude,
-		t,
-	)
-}
-
 func TestTwoDoubleStarMatch(t *testing.T) {
 	testCheck(
 		"services/dir1/name/some_files.txt",
