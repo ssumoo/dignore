@@ -44,7 +44,11 @@ func getPrintString(
 	explain bool,
 ) string {
 	if explain {
-		return fmt.Sprintf("%s [%s]", path, res.Line)
+		finalRes := "include"
+		if res.Mode == matchExclude {
+			finalRes = "exclude"
+		}
+		return fmt.Sprintf("[%s] %s [%s]", finalRes, path, res.Line)
 	}
 	return path
 }
