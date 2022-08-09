@@ -4,6 +4,11 @@
 
 ## Installation
 
+### Install from Releases (Linux)
+1. download the latest (or any) version from the releases page
+2. expose the `dignore` executable to `$PATH`
+
+### Install with Git
 1. install go: https://go.dev/doc/install
 2. `git clone https://github.com/ssumoo/dignore.git`
 3. `cd dignore && go install`

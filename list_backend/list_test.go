@@ -1,7 +1,5 @@
 package list_backend_test
 
-// package backend
-
 import (
 	"testing"
 
