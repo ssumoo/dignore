@@ -18,11 +18,6 @@
 
 ```bash
 dignore list --help  # show helps
-```
-
-### Examples
-
-```bash
 dignore list  # in $PWD, read .dockerignore, and print all included files
 dignore list --path <my_new_path_that_is_not_cwd>
 dignore list --dockerignore <my_new_dockerignore_path_that_is_not_.dockerignore>
