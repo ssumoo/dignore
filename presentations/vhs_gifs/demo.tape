@@ -13,7 +13,7 @@ Enter
 Type "dignore list"
 Sleep 500ms
 Enter
-Sleep 1s
+Sleep 2s
 Enter
 
 Type 'echo "exclude_dir/" >> .dockerignore'
@@ -22,7 +22,7 @@ Enter
 Type "dignore list"
 Sleep 500ms
 Enter
-Sleep 1s
+Sleep 2s
 Enter
 
 Type 'echo "!**/*include*" >> .dockerignore'
@@ -31,7 +31,7 @@ Enter
 Type "dignore list"
 Sleep 500ms
 Enter
-Sleep 1s
+Sleep 2s
 Enter
 
 Type "dignore list --excluded"
@@ -39,4 +39,4 @@ Sleep 500ms
 Enter
 
 # Admire the output for a bit.
-Sleep 5s
+Sleep 8s
