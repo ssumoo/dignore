@@ -65,7 +65,6 @@ func printDockerIgnoredFiles(
 		return
 	}
 	defer f.Close()
-	excludeLines = append(excludeLines, ".dockerignore")
 	pm, matcherErr := patternmatcher.New(excludeLines)
 	if matcherErr != nil {
 		log.Fatalf("dockerignore file provided at %s does not lead to any valid pattern (%s)", absDockerignorePath, matcherErr)

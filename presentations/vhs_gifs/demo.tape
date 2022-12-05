@@ -1,7 +1,7 @@
 Output demo.gif
 
 # Set up a 1200x600 terminal with 46px font.
-Set FontSize 24
+Set FontSize 20
 Set Width 1200
 Set Height 600
 
@@ -19,12 +19,6 @@ Enter
 Type 'echo "exclude_dir/" >> .dockerignore'
 Sleep 200ms
 Enter
-Type "dignore list"
-Sleep 500ms
-Enter
-Sleep 2s
-Enter
-
 Type 'echo "!**/*include*" >> .dockerignore'
 Sleep 200ms
 Enter
