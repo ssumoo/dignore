@@ -7,7 +7,7 @@
 
 ### Install from Releases (Linux)
 ```bash
-wget https://github.com/ssumoo/dignore/releases/download/v2.0.0/dignore -O $HOME/.local/bin/dignore
+wget https://github.com/ssumoo/dignore/releases/download/v2.0.0/dignore -O $HOME/.local/bin/dignore && chmod +x $HOME/.local/bin/dignore
 ```
 - in general, this should work right away
 - change `v2.0.0` to other release tags if required
