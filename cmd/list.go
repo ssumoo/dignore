@@ -57,7 +57,6 @@ func printDockerIgnoredFiles(
 			log.Fatalf("error while reading .dockerignore at %s (%s)", absDockerignorePath, excludesErr)
 			return
 		}
-		defer f.Close()
 	} else if errors.Is(err, os.ErrNotExist) {
 		fmt.Fprintf(os.Stderr, "WARNING: .dockerignore file provided at %s doesn't exist, will treat this case as not excluding anything\n", absDockerignorePath)
 		excludeLines = make([]string, 0)
@@ -65,6 +64,7 @@ func printDockerIgnoredFiles(
 		log.Fatalf("can't open .dockerignore file provided at %s, (%s)", absDockerignorePath, err)
 		return
 	}
+	defer f.Close()
 	pm, matcherErr := patternmatcher.New(excludeLines)
 	if matcherErr != nil {
 		log.Fatalf("dockerignore file provided at %s does not lead to any valid pattern (%s)", absDockerignorePath, matcherErr)
