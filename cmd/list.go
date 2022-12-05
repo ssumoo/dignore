@@ -1,26 +1,25 @@
 package cmd
 
 import (
+	"fmt"
+	"log"
 	"os"
+	"path/filepath"
 
-	"github/ssumoo/dignore/list_backend"
-
+	"github.com/moby/buildkit/frontend/dockerfile/dockerignore"
+	"github.com/moby/patternmatcher"
 	"github.com/spf13/cobra"
 )
 
 func init() {
 	cwd, _ := os.Getwd()
 	rootCmd.AddCommand(listCmd)
-	listCmd.PersistentFlags().BoolVarP(&include, "include", "i", false, "set to show only included files")
-	listCmd.PersistentFlags().BoolVarP(&all, "all", "a", false, "set to show only included + excluded files")
-	listCmd.PersistentFlags().BoolVarP(&quiet, "quiet", "q", false, "show paths only, don't show reason why/why not a path is in/ex-cluded")
+	listCmd.PersistentFlags().BoolVarP(&printExcluded, "excluded", "e", false, "set to show only excluded files instead of included files")
 	listCmd.PersistentFlags().StringVarP(&rootPath, "path", "p", cwd, "root path to list from")
 	listCmd.PersistentFlags().StringVarP(&dockerignorePath, "dockerignore", "d", ".dockerignore", "path to dockerignore")
 }
 
-var include bool
-var all bool
-var quiet bool
+var printExcluded bool
 var rootPath string
 var dockerignorePath string
 
@@ -28,20 +27,70 @@ var listCmd = &cobra.Command{
 	Use:     "list",
 	Short:   "list file names",
 	Aliases: []string{"ls"},
-	Long:    "list file names long version",
+	Long:    "list file names included with the given .dockerignore file",
 	Run: func(cmd *cobra.Command, args []string) {
-
-		printFilter := list_backend.PrintExclude
-		if all {
-			printFilter = list_backend.PrintAll
-		} else if include {
-			printFilter = list_backend.PrintInclude
-		}
-		list_backend.List(
+		printDockerIgnoredFiles(
 			dockerignorePath,
 			rootPath,
-			!quiet,
-			printFilter,
+			printExcluded,
 		)
 	},
+}
+
+func printDockerIgnoredFiles(
+	dockerignorePath string,
+	rootPath string,
+	printExcluded bool,
+) {
+	absDockerignorePath, err := filepath.Abs(dockerignorePath)
+	if err != nil {
+		log.Fatalf("can't resolve the given dockerignore path to absolute path: %s, (%s)", dockerignorePath, err)
+		return
+	}
+	f, err := os.Open(absDockerignorePath)
+	if err != nil {
+		log.Fatalf("can't open .dockerignore file provided at %s, (%s)", absDockerignorePath, err)
+		return
+	}
+	defer f.Close()
+	excludeLines, excludesErr := dockerignore.ReadAll(f)
+	if excludesErr != nil {
+		log.Fatalf("error while reading .dockerignore at %s (%s)", absDockerignorePath, excludesErr)
+		return
+	}
+	pm, matcherErr := patternmatcher.New(excludeLines)
+	if matcherErr != nil {
+		log.Fatalf("dockerignore file provided at %s does not lead to any valid pattern (%s)", absDockerignorePath, matcherErr)
+		return
+	}
+
+	walkErr := filepath.Walk(
+		rootPath,
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				log.Fatalf("error checking path (%s) against dockerignore (%s)", path, err)
+				return err
+			}
+			if info.IsDir() {
+				return nil
+			}
+			relPath, err := filepath.Rel(rootPath, path)
+			if err != nil {
+				log.Fatalf("error computing relative path of %s wrt root path %s", path, rootPath)
+				return err
+			}
+			pathIsExcluded, err := pm.MatchesOrParentMatches(relPath)
+			if err != nil {
+				log.Fatalf("pattern matcher errored against path %s (%s)", path, err)
+				return err
+			}
+			if pathIsExcluded == printExcluded {
+				fmt.Printf("%s\n", relPath)
+			}
+			return nil
+		})
+	if walkErr != nil {
+		log.Fatalf("error walking directory: (%s) (%s)", rootPath, walkErr)
+		return
+	}
 }
