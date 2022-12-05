@@ -1,6 +1,7 @@
 # dignore
 
 `dignore` is a cli tool to list .dockerignore-d files
+![demo_gif](dignore_demo.gif)
 
 ## Installation
 
@@ -17,20 +18,8 @@
 
 ```bash
 dignore list --help  # show helps
+dignore list  # in $PWD, read .dockerignore, and print all included files
+dignore list --path <my_new_path_that_is_not_cwd>
+dignore list --dockerignore <my_new_dockerignore_path_that_is_not_.dockerignore>
+dignore list --excluded > excluded_files.txt  # list all excluded files and write to a text file
 ```
-
-### Examples
-
-```bash
-dignore list  # in $PWD, read .dockerignore, and print all excluded files
-dignore list --include  # and print all included files
-dignore list --all  # print all included and excluded files
-dignore list --include --quiet > included_files.txt
-dignore list | fzf  # run dignore + pipe into the fzf search
-```
-
-## Limitations
-
-- Currently no checkings is done on each lines read from the `.dockerignore` file to flag / reject invalid lines. Please
-give it a valid `.dockerignore` file
-    - If this feature is highly wanted please let me know! so I know it's a feature worth building for.
