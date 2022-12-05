@@ -1,7 +1,7 @@
 # dignore
 
 `dignore` is a cli tool to list .dockerignore-d files
-![demo](demo.gif)
+![demo_gif](demo.gif)
 
 ## Installation
 
